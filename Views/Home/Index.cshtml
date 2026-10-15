@@ -1,0 +1,77 @@
+@model GithubSearchDemo.Models.UsersSearchViewModel
+@{
+    ViewData["Title"] = "GitHub User Search Task";
+}
+
+<div class="container">
+    <h2>GitHub User Search</h2>
+
+    <form id="searchForm" asp-controller="Home" asp-action="Index" method="Post" class="form-inline mb-3" onsubmit="searchUser(); return false;">
+        <div class="form-group mr-2">
+            <input type="text" asp-for="UserName" id="Username" class="form-control" placeholder="Enter GitHub username" required />
+        </div>
+        <button type="button" class="btn btn-primary" id="searchButton" onclick="searchUser();">Search</button>
+    </form>
+    <div id="loader" class="text-center" style="display:none;">
+    </div>
+    <div id="searchResults">
+        @if (Model != null)
+        {
+
+            @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+            {
+                <div class="alert alert-danger">
+                    @Model.ErrorMessage
+                </div>
+            }
+
+            @if (Model.GitHubUsers != null)
+            {
+                <h4>User Details</h4>
+                <table class="table table-bordered">
+                    <tr>
+                        <th>UserName</th>
+                        <td>@Model.GitHubUsers.Name</td>
+                    </tr>
+                    <tr>
+                        <th>Avatar URL</th>
+                        <td><a href="@Model.GitHubUsers.AvatarUrl" target="_blank">@Model.GitHubUsers.AvatarUrl</a></td>
+                    </tr>
+                    <tr>
+                        <th>Location</th>
+                        <td>@Model.GitHubUsers.Location</td>
+                    </tr>
+                </table>
+            }
+            <h4>Repositories</h4>
+            @if (Model.GitHubRepositories != null && Model.GitHubRepositories.Count > 0)
+            {
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Repository Name</th>
+                            <th>Node ID</th>
+                            <th>Stargazers Count</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var repo in Model.GitHubRepositories)
+                        {
+                            <tr>
+                                <td>@repo.Name</td>
+                                <td>@repo.NodeId</td>
+                                <td>@repo.StargazersCount</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <p>No repositories found.</p>
+            }
+        }
+    </div>
+</div>
+
+<script src="~/js/search.js"></script>
